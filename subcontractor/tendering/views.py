@@ -21,7 +21,7 @@ def create_comparison(request):
         item_formset = ItemFormSet(prefix='item')
         comparetive_statement_form = ComparetiveStatementForm(prefix='cs')
     
-    return render(request, 'comparison_form.html', {
+    return render(request, 'beta.html', {
         'item_formset': item_formset,
         'comparetive_statement_form': comparetive_statement_form
     })
