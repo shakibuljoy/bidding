@@ -1,0 +1,37 @@
+<form method="post" id="item-forms">
+  {% csrf_token %}
+
+  {{ comparetive_statement_form.as_table }}
+
+  <div id="form-container">
+    <!-- Initial form fields -->
+    {{ item_formset.management_form }}
+    {% for form in item_formset %}
+      {{ form.as_table }}
+    {% endfor %}
+  </div>
+
+  <button type="button" id="add-form-button">Add Form</button>
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var addFormButton = document.getElementById('add-form-button');
+    var formContainer = document.getElementById('form-container');
+    var totalFormsInput = document.getElementById('id_item_set-TOTAL_FORMS');
+
+    var formCount = {{ item_formset.total_form_count }};  // Total number of initial forms
+
+    addFormButton.addEventListener('click', function() {
+      var newFormHtml = `{{ item_formset.empty_form.as_table }}`;
+      console.log("Button Clicked")
+      newFormHtml = newFormHtml.replace(/__prefix__/g, formCount);
+      formContainer.insertAdjacentHTML('beforeend', newFormHtml);
+
+      // Update total forms input value
+      formCount++;
+      totalFormsInput.value = formCount;
+    });
+  });
+</script>

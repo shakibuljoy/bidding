@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from tendering import views
+from tendering.views import create_comparison
 from books.views import create_book, create_book_form, book_detail, delete_book, update_book
 
 urlpatterns = [
@@ -26,5 +26,6 @@ urlpatterns = [
     path('htmx/book/<pk>/', book_detail, name="detail-book"),
     path('htmx/delete/<pk>/', delete_book, name="delete-book"),
     path('htmx/update/<pk>/', update_book, name="update-book"),
-    path('bidding/', include('tendering.urls'))
+    path('bidding/', include('tendering.urls')),
+    path('bidding/create', create_comparison),
 ]
