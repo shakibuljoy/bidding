@@ -8,7 +8,7 @@ class ItemForm(forms.ModelForm):
         fields = ['name', 'description', 'unit', 'apprx_qty']
 
 
-ItemFormSet = formset_factory(ItemForm, extra=2)
+ItemFormSet = formset_factory(ItemForm, extra=1)
 
 
 class ComparetiveStatementForm(forms.ModelForm):

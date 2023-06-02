@@ -1,14 +1,21 @@
+{% load crispy_forms_tags %}
+
 <form method="post" id="item-forms">
   {% csrf_token %}
 
-  {{ comparetive_statement_form.as_table }}
+  {{ comparetive_statement_form|crispy }}
 
   <div id="form-container">
     <!-- Initial form fields -->
     {{ item_formset.management_form }}
+
     {% for form in item_formset %}
+    <div class="form-row"> 
       {{ form.as_table }}
+      <button type="button" class="delete-form-button">Delete</button>
+    </div>
     {% endfor %}
+    
   </div>
 
   <button type="button" id="add-form-button">Add Form</button>
@@ -19,19 +26,50 @@
   document.addEventListener('DOMContentLoaded', function() {
     var addFormButton = document.getElementById('add-form-button');
     var formContainer = document.getElementById('form-container');
-    var totalFormsInput = document.getElementById('id_item_set-TOTAL_FORMS');
-
+    var totalFormsInput = document.getElementById('id_item-TOTAL_FORMS');
+  
     var formCount = {{ item_formset.total_form_count }};  // Total number of initial forms
-
+  
     addFormButton.addEventListener('click', function() {
       var newFormHtml = `{{ item_formset.empty_form.as_table }}`;
-      console.log("Button Clicked")
       newFormHtml = newFormHtml.replace(/__prefix__/g, formCount);
-      formContainer.insertAdjacentHTML('beforeend', newFormHtml);
-
+  
+      var formWrapper = document.createElement('div');  // Create a wrapper element
+      formWrapper.classList.add('form-row');  // Add a CSS class to the wrapper
+      formWrapper.innerHTML = newFormHtml;  // Set the form HTML as the content of the wrapper
+  
+      formContainer.appendChild(formWrapper);  // Append the wrapper to the form container
+  
       // Update total forms input value
       formCount++;
       totalFormsInput.value = formCount;
+  
+      // Add delete button to the newly added form
+      var deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.textContent = 'Delete';
+      deleteButton.classList.add('delete-form-button');
+      formWrapper.appendChild(deleteButton);  // Append the delete button to the form wrapper
+  
+      // Attach event listener to delete button
+      deleteButton.addEventListener('click', function() {
+        formContainer.removeChild(formWrapper);  // Remove the form wrapper
+        formCount--;
+        totalFormsInput.value = formCount;
+      });
+    });
+  
+    // Attach event listeners to existing delete buttons
+    var existingDeleteButtons = document.querySelectorAll('.delete-form-button');
+    existingDeleteButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        var formWrapper = button.parentNode;  // Get the parent form wrapper
+        formContainer.removeChild(formWrapper);  // Remove the form wrapper
+        formCount--;
+        totalFormsInput.value = formCount;
+      });
     });
   });
+  
+  
 </script>
