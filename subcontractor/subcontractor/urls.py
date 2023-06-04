@@ -26,6 +26,5 @@ urlpatterns = [
     path('htmx/book/<pk>/', book_detail, name="detail-book"),
     path('htmx/delete/<pk>/', delete_book, name="delete-book"),
     path('htmx/update/<pk>/', update_book, name="update-book"),
-    path('bidding/', include('tendering.urls')),
-    path('bidding/create', create_comparison),
+    path('bidding/', include('tendering.urls'))
 ]
