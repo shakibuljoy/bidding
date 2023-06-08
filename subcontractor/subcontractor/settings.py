@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_tailwind",
     'tendering',
-    'books'
+    'books',
+    'usermodel'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 
 CRISPY_TEMPLATE_PACK = "tailwind"
+
+AUTH_USER_MODEL = 'usermodel.CustomUser'
+LOGIN_URL = 'usermodel:login'
