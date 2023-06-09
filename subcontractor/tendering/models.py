@@ -1,4 +1,5 @@
 from django.db import models
+from usermodel.models import CustomUser
 
 class ComparetiveStatement(models.Model):
     title = models.CharField(max_length=200)
@@ -16,13 +17,9 @@ class Item(models.Model):
     cs = models.ForeignKey(ComparetiveStatement, on_delete=models.CASCADE)
 
 
-class Vendor(models.Model):
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20)
-
-
 class ItemPrice(models.Model):
     price = models.PositiveIntegerField(blank=True, null=True)
+    extra_field = models.IntegerField(blank=True, null=True)
     cs = models.ForeignKey(ComparetiveStatement, on_delete=models.CASCADE)
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)

@@ -51,58 +51,31 @@
           </tr>
         </thead>
         
-      <form action="{% url 'tendering:price-comparison' cs.id %}" method="post" id="item-price-form">
-        {%csrf_token%}
-        {{formset.management_form}}
+      
         <tbody id="item-price-body">
-          {% for item in items %}
+          {% for price in prices %}
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
             <td>
-              <span class="item-name">{{ item.name }} :</span>
-              {{ item.description }}
+              <span class="item-name">{{ price.item.name }} :</span>
+              {{ price.item.description }}
             </td>
-            <td>{{ item.unit }}</td>
-            {% if app_c > 0 and item.apprx_qty is not None %}
-            <td>{{ item.apprx_qty }} {{ item.unit }}</td>
+            <td>{{ price.item.unit }}</td>
+            {% if app_c > 0 and price.item.apprx_qty is not None %}
+            <td>{{ price.item.apprx_qty }} {{ price.item.unit }}</td>
             {% elif app_c > 0 %}
             <td>N / A</td>
             {% endif %}
-            <td>
-              <input type="number" name="item_price-{{forloop.counter0}}-price" value="0" class="form-control item-price" min="0" ></td>
-              <input type="hidden" name="item_price-{{forloop.counter0}}-extra_field" value="{{item.id}}" class="form-control">
-          </tr>
+            <td>{{price.price}}</td>
+              
+           </tr>
         {% endfor %}
         </tbody>
-        <button class="btn btn-danger m-4 ml-0" type="submit">Bid</button>
-      </form>
         
       </table>
       
       
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", function() {
-          var form = document.getElementById("item-price-form");
-          var formsetPrefix = "{{ formset.prefix }}";
-          var totalFormsInput = document.getElementById("id_" + formsetPrefix + "-TOTAL_FORMS");
-          var itemPriceBody = document.getElementById("item-price-body");
-  
-          function updateTotalForms() {
-              var priceInputs = itemPriceBody.querySelectorAll(".item-price");
-              totalFormsInput.value = priceInputs.length;
-          }
-  
-          // Add event listeners to dynamically added price inputs
-          itemPriceBody.addEventListener("input", function(event) {
-              if (event.target.classList.contains("item-price")) {
-                  updateTotalForms();
-              }
-          });
-  
-          // Initial update on page load
-          updateTotalForms();
-      });
-  </script>
+    
 </body>
 </html>

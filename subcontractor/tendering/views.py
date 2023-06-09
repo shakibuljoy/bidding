@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django import forms
+from django.http import HttpResponse, Http404
 from .forms import ItemFormSet, ComparetiveStatementForm, ItemPriceForm, PriceFormSet
 from django.forms import formset_factory
 from .models import ComparetiveStatement, Item, ItemPrice
@@ -47,6 +48,7 @@ def show_comparison(request, pk):
     }
     return render(request, "show_comparison.html", context)
 
+
 def show_list(request):
     comparetive_statement = ComparetiveStatement.objects.all()
     context = {
@@ -57,18 +59,41 @@ def show_list(request):
 
 
 # Usage example in a view
-def price_comparison(request):
+def price_comparison(request, pk):
     if request.method == 'POST':
+        cs = ComparetiveStatement.objects.get(id=pk)
         formset = PriceFormSet(request.POST, prefix='item_price')
         data = []
         if formset.is_valid():
-            print("Form is valid")
             for form in formset:
-                price = form.cleaned_data['price']
-                data.append(price)
-            return HttpResponse(data)
+                price = form.save(commit=False)
+                price.cs = ComparetiveStatement.objects.get(id=pk)
+                price.vendor = request.user
+                item_id = form.cleaned_data['extra_field']
+                price.item = Item.objects.get(id=item_id)
+                price.save()
+                
+            return HttpResponse('Success')
             # Handle formset submission success
     else:
-        formset = PriceFormSet(prefix='item_price')
+        raise Http404
+    
 
-    return render(request, 'beta_comparison.html', {'formset': formset})
+def show_price(request, pk):
+    cs = ComparetiveStatement.objects.get(pk=pk)
+    prices = ItemPrice.objects.filter(cs=cs)
+    app_c = 0
+    
+
+    for price in prices:
+        if price.item.apprx_qty is not None:
+            if int(price.item.apprx_qty) > 0:
+                app_c += 1
+
+    context = {
+        'cs':cs,
+        'prices':prices,
+        'app_c': app_c,
+    }
+    return render(request, "show_price.html", context)
+

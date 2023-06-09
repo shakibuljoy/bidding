@@ -35,9 +35,11 @@ class ComparetiveStatementForm(forms.ModelForm):
 class ItemPriceForm(forms.ModelForm):
     class Meta:
         model = ItemPrice
-        fields = ['price']
+        fields = ['price', 'extra_field']
         widgets = {
-            'price': forms.NumberInput(attrs={'class': 'form-control'})
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'extra_field': forms.NumberInput(attrs={'class': 'form-control'})
         }
+    
     
 PriceFormSet = formset_factory(ItemPriceForm, extra=5)
