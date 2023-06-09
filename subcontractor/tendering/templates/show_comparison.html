@@ -50,8 +50,12 @@
             <th id="price" scope="col">Price</th>
           </tr>
         </thead>
+        
+      <form action="{% url 'tendering:price-comparison' %}" method="post">
+        {%csrf_token%}
+        {{formset.management_form}}
         <tbody>
-        {% for item in items %}
+          {% for item in items %}
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
             <td>
@@ -64,10 +68,13 @@
             {% elif app_c > 0 %}
             <td>N / A</td>
             {% endif %}
-            <td>BDT 0.00</td>
+            <td><input type="number" name="item_price-{{forloop.counter0}}-price" value="0" class="form-control" min="0" id="id_item_price-{{forloop.counter0}}-price"></td>
           </tr>
         {% endfor %}
         </tbody>
+        <button class="btn btn-danger m-4 ml-0" type="submit">Bid</button>
+      </form>
+        
       </table>
       
       

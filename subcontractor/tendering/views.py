@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import ItemFormSet, ComparetiveStatementForm
-from .models import ComparetiveStatement, Item
+from .forms import ItemFormSet, ComparetiveStatementForm, ItemPriceForm, PriceFormSet
+from django.forms import formset_factory
+from .models import ComparetiveStatement, Item, ItemPrice
 
 def create_comparison(request):
     if request.method == 'POST':
@@ -41,7 +42,8 @@ def show_comparison(request, pk):
     context = {
         'cs':cs,
         'items':items,
-        'app_c': app_c
+        'app_c': app_c,
+        'formset':PriceFormSet(prefix='item_price')
     }
     return render(request, "show_comparison.html", context)
 
@@ -51,3 +53,22 @@ def show_list(request):
         'comparetive_statement':comparetive_statement
     }
     return render(request, 'index.html', context)
+
+
+
+# Usage example in a view
+def price_comparison(request):
+    if request.method == 'POST':
+        formset = PriceFormSet(request.POST, prefix='item_price')
+        data = []
+        if formset.is_valid():
+            print("Form is valid")
+            for form in formset:
+                price = form.cleaned_data['price']
+                data.append(price)
+            return HttpResponse(data)
+            # Handle formset submission success
+    else:
+        formset = PriceFormSet(prefix='item_price')
+
+    return render(request, 'beta_comparison.html', {'formset': formset})

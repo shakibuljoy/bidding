@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import formset_factory
-from .models import Item, ComparetiveStatement
+from .models import Item, ComparetiveStatement, ItemPrice
 
 class ItemForm(forms.ModelForm):
     class Meta:
@@ -32,3 +32,12 @@ class ComparetiveStatementForm(forms.ModelForm):
             'location': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+class ItemPriceForm(forms.ModelForm):
+    class Meta:
+        model = ItemPrice
+        fields = ['price']
+        widgets = {
+            'price': forms.NumberInput(attrs={'class': 'form-control'})
+        }
+    
+PriceFormSet = formset_factory(ItemPriceForm, extra=5)

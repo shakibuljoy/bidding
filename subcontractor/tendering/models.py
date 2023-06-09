@@ -22,7 +22,7 @@ class Vendor(models.Model):
 
 
 class ItemPrice(models.Model):
-    price = models.PositiveIntegerField(default=0)
+    price = models.PositiveIntegerField(blank=True, null=True)
     cs = models.ForeignKey(ComparetiveStatement, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)

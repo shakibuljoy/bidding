@@ -39,10 +39,29 @@
 <body>
     <div class="container">
       
-        
-      
+        <form method="post">
+          {%csrf_token%}
+            {{formset.management_form}}
+          <div id="form-container">
+            <input type="number" name="item_price-0-price" value="0" class="form-control" min="0" id="id_item-price">
+            <input type="number" name="item_price-1-price" value="0" class="form-control" min="0" id="id_item-price">
+            <input type="number" name="item_price-2-price" value="0" class="form-control" min="0" id="id_item-price">
+          </div>
+            
+            
+
+            <button type="submit">submit</button>
+        </form>
+
       
     </div>
-    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var formcounter = document.getElementById("id_item_price-TOTAL_FORMS");
+        var formcontainer = document.getElementById("form-container");
+        var formHtml = `<input type="number" name="item_price-2-price" value="0" class="form-control" min="0" id="id_item-price">`
+        formcounter.value = 3
+});
+    </script>
 </body>
 </html>
