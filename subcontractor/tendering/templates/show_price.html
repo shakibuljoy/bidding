@@ -32,6 +32,10 @@
       tbody tr td:nth-child(2) {
         text-align: left;
       }
+      #price {
+        text-align: center;
+        justify-content: center;
+      }
 
       
     </style>
@@ -47,27 +51,34 @@
             {% if app_c > 0 %}
             <th id="apprx" scope="col">Apprx. Qty.</th>
             {% endif %}
-            <th id="price" scope="col">Price</th>
+            {% for vendor in vendors %}
+            <th id="price" scope="col">{{vendor.company_name}}</th>
+            {%endfor%}
           </tr>
         </thead>
         
       
         <tbody id="item-price-body">
-          {% for price in prices %}
+          {% for item in items %}
           <tr>
+
             <th scope="row">{{ forloop.counter }}</th>
             <td>
-              <span class="item-name">{{ price.item.name }} :</span>
-              {{ price.item.description }}
+              <span class="item-name">{{ item.name }} :</span>
+              {{ item.description }}
             </td>
-            <td>{{ price.item.unit }}</td>
-            {% if app_c > 0 and price.item.apprx_qty is not None %}
-            <td>{{ price.item.apprx_qty }} {{ price.item.unit }}</td>
+            <td>{{ item.unit }}</td>
+            {% if app_c > 0 and item.apprx_qty is not None %}
+            <td>{{ item.apprx_qty }} {{ item.unit }}</td>
             {% elif app_c > 0 %}
             <td>N / A</td>
             {% endif %}
-            <td>{{price.price}}</td>
-              
+            {% for price in prices %}
+            {% if price.item == item %}
+            <td class="price">{{price.price}}</td>
+            {%endif%}
+            {%endfor%}
+
            </tr>
         {% endfor %}
         </tbody>
@@ -76,6 +87,5 @@
       
       
     </div>
-    
 </body>
 </html>

@@ -13,3 +13,5 @@ class CS(admin.ModelAdmin):
 
 admin.site.register(ComparetiveStatement, CS)
 admin.site.register(ItemPrice)
+
+

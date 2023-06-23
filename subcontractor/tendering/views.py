@@ -81,19 +81,26 @@ def price_comparison(request, pk):
 
 def show_price(request, pk):
     cs = ComparetiveStatement.objects.get(pk=pk)
+    items = Item.objects.filter(cs=cs)
     prices = ItemPrice.objects.filter(cs=cs)
+    vendors = []
+    if prices is not None:
+        for price in prices:
+            if price.vendor not in vendors:
+                vendors.append(price.vendor)
+
     app_c = 0
-    
 
     for price in prices:
         if price.item.apprx_qty is not None:
             if int(price.item.apprx_qty) > 0:
                 app_c += 1
-
     context = {
         'cs':cs,
-        'prices':prices,
+        'items':items,
         'app_c': app_c,
+        'vendors':vendors,
+        'prices': prices
     }
     return render(request, "show_price.html", context)
 
