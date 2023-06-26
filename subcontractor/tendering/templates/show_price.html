@@ -35,12 +35,14 @@
       #price {
         text-align: center;
         justify-content: center;
+        min-width: 80px;
       }
 
       
     </style>
 </head>
 <body>
+  {% include 'navbar.html'%}
     <div class="container">
       <table class="table table-bordered">
         <thead>
@@ -56,7 +58,7 @@
             {%endfor%}
           </tr>
         </thead>
-        
+      
       
         <tbody id="item-price-body">
           {% for item in items %}
@@ -75,7 +77,7 @@
             {% endif %}
             {% for price in prices %}
             {% if price.item == item %}
-            <td class="price">{{price.price}}</td>
+            <td class="price">Tk. {{price.price}}</td>
             {%endif%}
             {%endfor%}
 
