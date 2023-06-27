@@ -3,6 +3,7 @@ from django import forms
 from django.http import HttpResponse, Http404
 from .forms import ItemFormSet, ComparetiveStatementForm, ItemPriceForm, PriceFormSet
 from django.forms import formset_factory
+from django.contrib.auth.decorators import login_required
 from .models import ComparetiveStatement, Item, ItemPrice
 
 def create_comparison(request):
@@ -30,9 +31,12 @@ def create_comparison(request):
     })
 
 
+@login_required
 def show_comparison(request, pk):
     cs = ComparetiveStatement.objects.get(pk=pk)
     items = Item.objects.filter(cs=cs)
+    item_price = ItemPrice.objects.filter(vendor=request.user, cs=cs)
+
     app_c = 0
 
     for item in items:
@@ -40,13 +44,68 @@ def show_comparison(request, pk):
             if int(item.apprx_qty) > 0:
                 app_c += 1
 
-    context = {
-        'cs':cs,
-        'items':items,
-        'app_c': app_c,
-        'formset':PriceFormSet(prefix='item_price')
-    }
+    if item_price is None:
+
+        context = {
+            'cs':cs,
+            'items':items,
+            'app_c': app_c,
+            'formset':PriceFormSet(prefix='item_price')
+        }
+    else:
+        context = {
+            'cs':cs,
+            'items':items,
+            'app_c': app_c,
+            'formset':PriceFormSet(prefix='item_price'),
+            'price_list': item_price
+        }
     return render(request, "show_comparison.html", context)
+
+
+@login_required
+def comparison_edit(request, pk):
+    cs = ComparetiveStatement.objects.get(pk=pk)
+    items = Item.objects.filter(cs=cs)
+    item_price = ItemPrice.objects.filter(vendor=request.user, cs=cs)
+
+    app_c = 0
+
+    for item in items:
+        if item.apprx_qty is not None:
+            if int(item.apprx_qty) > 0:
+                app_c += 1
+
+    if item_price is None:
+
+        return redirect('tendering:show-comparison', pk=pk)
+    else:
+        if request.method == 'POST':
+            cs = ComparetiveStatement.objects.get(id=pk)
+            formset = PriceFormSet(request.POST, prefix='item_price')
+            data = []
+            if formset.is_valid():
+                for form in formset:
+                    price = form.save(commit=False)
+                    item_id = form.cleaned_data['extra_field']
+                    item_show = Item.objects.get(id=item_id)
+                    if ItemPrice.objects.get(item=item_show):
+                        ItemPrice.objects.get(item=item_show).delete()
+                    price.cs = ComparetiveStatement.objects.get(id=pk)
+                    price.vendor = request.user
+                    price.item = Item.objects.get(id=item_id)
+                    price.save()
+                    
+                return redirect('tendering:show-comparison', pk=pk)
+
+        context = {
+            'cs':cs,
+            'items':items,
+            'app_c': app_c,
+            'formset':PriceFormSet(prefix='item_price'),
+            'price_list': item_price
+        }
+    return render(request, "edit_comparison.html", context)
 
 
 def show_list(request):
